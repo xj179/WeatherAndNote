@@ -27,6 +27,7 @@ import com.example.vongvia.weatherandcourse.adapter.ViewPagerAdapter;
 import com.example.vongvia.weatherandcourse.dialogs.AboutDialogFragment;
 import com.example.vongvia.weatherandcourse.dialogs.AddDialogFragment;
 import com.example.vongvia.weatherandcourse.dialogs.ChooseCityDialogFragment;
+import com.example.vongvia.weatherandcourse.dialogs.SetWallPaperFragment;
 import com.example.vongvia.weatherandcourse.fragments.DailyFragment;
 import com.example.vongvia.weatherandcourse.utils.AppUtils;
 import com.example.vongvia.weatherandcourse.utils.DbServices;
@@ -42,7 +43,7 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import test.greenDAO.bean.Duty;
 
-public class MainActivity extends RxAppCompatActivity implements View.OnClickListener, ChooseCityDialogFragment.CityInputListener, AddDialogFragment.AddDutyInputListener {
+public class MainActivity extends RxAppCompatActivity implements View.OnClickListener, ChooseCityDialogFragment.CityInputListener, SetWallPaperFragment.onSetWallPaperOK, AddDialogFragment.AddDutyInputListener {
     private static RxBus _rxBus;
 
     /**
@@ -200,39 +201,10 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
                 break;
 
             case R.id.tv_scan_all:
-                setBackground();
+                SetWallPaperFragment setWall = new SetWallPaperFragment();
+                setWall.show(getFragmentManager(), "getWallDialog");
                 break;
         }
-    }
-
-    void setBackground() {
-        final WallpaperManager instance = WallpaperManager.getInstance(this);
-        int desiredMinimumWidth = this.getWindowManager().getDefaultDisplay().getWidth();
-        int desiredMinimumHeight = this.getWindowManager().getDefaultDisplay().getHeight();
-        instance.suggestDesiredDimensions(desiredMinimumWidth, desiredMinimumHeight);
-        Observable<Void> setBack = Observable.create(new Observable.OnSubscribe<Void>() {
-            @Override
-            public void call(Subscriber<? super Void> subscriber) {
-                try {
-                    Bitmap bmp = Picasso.with(MainActivity.this).load(AppUtils.back_url).get();
-                    instance.setBitmap(bmp);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                subscriber.onNext(null);
-                subscriber.onCompleted();
-            }
-        }).compose(this.<Void>bindToLifecycle())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-        setBack.subscribe(new Action1<Void>() {
-            @Override
-            public void call(Void aVoid) {
-                Toast.makeText(MainActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
     }
 
     @Override
@@ -272,4 +244,32 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
     }
 
 
+    @Override
+    public void onSetWallPaper() {
+        final WallpaperManager instance = WallpaperManager.getInstance(this);
+        int desiredMinimumWidth = getWindowManager().getDefaultDisplay().getWidth();
+        int desiredMinimumHeight = getWindowManager().getDefaultDisplay().getHeight();
+        instance.suggestDesiredDimensions(desiredMinimumWidth, desiredMinimumHeight);
+        Observable<Void> setBack = Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                try {
+                    Bitmap bmp = Picasso.with(MainActivity.this).load(AppUtils.back_url).get();
+                    instance.setBitmap(bmp);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                subscriber.onNext(null);
+                subscriber.onCompleted();
+            }
+        }).compose(this.<Void>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        setBack.subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Toast.makeText(MainActivity.this, "设置成功", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

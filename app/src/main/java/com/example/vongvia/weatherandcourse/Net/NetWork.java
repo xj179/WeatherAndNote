@@ -14,9 +14,9 @@ public class NetWork {
     public static BingApi bingApi;
     public static WeatherApi weatherApi;
     static OkHttpClient client = new OkHttpClient.Builder()
-            .retryOnConnectionFailure(true)
             .readTimeout(3, TimeUnit.SECONDS)
             .connectTimeout(3, TimeUnit.SECONDS)
+            .writeTimeout(3, TimeUnit.SECONDS)
             .build();
 
     //获取bing壁纸地址
