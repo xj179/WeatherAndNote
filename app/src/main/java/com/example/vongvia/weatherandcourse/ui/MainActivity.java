@@ -246,6 +246,7 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
 
     @Override
     public void onSetWallPaper() {
+        Toast.makeText(MainActivity.this, "设置中，请稍后。。。", Toast.LENGTH_SHORT).show();
         final WallpaperManager instance = WallpaperManager.getInstance(this);
         int desiredMinimumWidth = getWindowManager().getDefaultDisplay().getWidth();
         int desiredMinimumHeight = getWindowManager().getDefaultDisplay().getHeight();
