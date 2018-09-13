@@ -38,7 +38,7 @@
                 android:textColor="@color/duty_title_color"
                 android:textSize="20sp"/>
 
-            <com.example.vongvia.weatherandcourse.utils.SmoothCheckBox
+            <com.lxj.note.myth.utils.SmoothCheckBox
                 android:id="@+id/scb"
                 android:layout_width="25dp"
                 android:layout_height="25dp"

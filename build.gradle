@@ -3,9 +3,12 @@
 buildscript {
     repositories {
         jcenter()
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.android.tools.build:gradle:3.1.4'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -14,11 +17,29 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url "https://jitpack.io" }
+        mavenCentral()
         jcenter()
+        google()
+        maven { url "https://jitpack.io" }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+ext {
+    // SDK And Tools
+    minSdkVersion = 21
+    targetSdkVersion = 27
+    compileSdkVersion = 28
+    buildToolsVersion = '27.0.3'
+
+    //Dependencies
+    /*支持库的版本需要跟compileSdkVersion保持一致。
+    注意：由于依赖的支持库会打包进apk，所以官方推荐开发者在编译时使用ProGuard工具预处理release版本的apk。
+    ProGuard工具除了混淆源代码外，还会移除那些依赖的支持库中没有使用到的类，达到apk瘦身的效果。*/
+    appcompatVersion = "28.0.0-rc01"
+//    appcompatVersion = "27+"
+    designVersion = "28.0.0-rc01"
 }

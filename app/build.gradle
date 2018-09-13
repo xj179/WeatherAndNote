@@ -1,15 +1,29 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.example.vongvia.weatherandcourse"
-        minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId "com.lxj.note.myth"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+/*        versionCode 1
+        versionName "1.0"*/
+
+        ndk {
+            //选择要添加的对应cpu类型的.so库。(对应JniLibs中有相应的armeabi， armeabi-v7a 文件夹)
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+        }
+
+        // If you have different applicationIds for buildTypes or productFlavors uncomment this block.
+        javaCompileOptions {
+            annotationProcessorOptions {
+//                arguments = ["resourcePackageName": android.defaultConfig.applicationId]
+                arguments = ["resourcePackageName": "com.lxj.note.myth"]
+            }
+        }
     }
     buildTypes {
         release {
@@ -22,37 +36,114 @@ android {
             java.srcDirs = ['src/main/java', 'src/main/java-gen']
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
+    /* 问题：Error:java.util.concurrent.ExecutionException: com.android.builder.internal.aapt.AaptException:
+     这个问题一般会在打包的时候遇到，查阅了网上很多资料都是说因为项目路径过长原因导致，但是其实很多时候并不是的，其主要原因是builde.gradle会在你打包的时候去检查你的res资源，一旦出现不规范就会出现该错误。
+     以上是问题所在，解决方案：
+     当然解决方案就是我们主动去禁止它检查，即在你Module的builde.gradle中添加以下代码：*/
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
+
+    productFlavors {
+        /*因为第一个是上传到了魅族应用商店所以魅族用默认的ID(跟包名是同一个)*/
+        meizu {
+            /*  minSdkVersion 19
+              versionCode 12
+              versionName '2.3'*/
+            versionCode 10000
+            versionName '1.0.0'
+            flavorDimensions "versionCode"
+            dimension "versionCode"
+            applicationId 'com.lxj.note.myth'
+            manifestPlaceholders = [
+                    JPUSH_PKGNAME: "com.lxj.note.myth",
+                    JPUSH_APPKEY : "290a50a0e8e4afeaef226ab6", //JPush上注册的包名对应的appkey.
+                    JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+            ]
+        }
+
+        myth {
+            versionCode 10000
+            versionName '1.0.0'
+            applicationId 'com.lxj.note.oracle'
+            flavorDimensions "versionCode"
+            dimension "versionCode"
+            manifestPlaceholders = [
+                    JPUSH_PKGNAME: "com.lxj.note.oracle",
+                    JPUSH_APPKEY : "863aff1bee6bf8f205838ae5", //JPush上注册的包名对应的appkey.
+                    JPUSH_CHANNEL: "eveloper-default", //暂时填写默认值即可.
+            ]
+        }
+
+        //        sanliuling {
+        sanK360 {
+            versionCode 10000
+            versionName '1.0.0'
+            applicationId 'com.plane.game.sanliuling'
+            flavorDimensions "versionCode"
+            dimension "versionCode"
+            manifestPlaceholders = [
+                    JPUSH_PKGNAME: "com.plane.game.sanliuling",
+                    JPUSH_APPKEY : "c4d0b1a1b90165bd377361b8", //JPush上注册的包名对应的appkey.
+                    JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+            ]
+        }
+    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    implementation "com.android.support:appcompat-v7:$rootProject.ext.appcompatVersion"
+    implementation "com.android.support:support-v4:$rootProject.ext.appcompatVersion"
+    implementation "com.android.support:design:$rootProject.ext.designVersion"
+/*    implementation 'com.android.support:recyclerview-v7:23.4.0'
+    implementation 'com.android.support:cardview-v7:23.4.0'*/
+
     //图片加载
-    compile 'com.squareup.picasso:picasso:2.3.2'
+    implementation 'com.squareup.picasso:picasso:2.3.2'
     //RxAndroid+RxJava
-    compile 'io.reactivex:rxjava:1.1.0'
-    compile 'io.reactivex:rxandroid:1.1.0'
+    implementation 'io.reactivex:rxjava:1.1.0'
+    implementation 'io.reactivex:rxandroid:1.1.0'
     //生命周期
-    compile 'com.trello:rxlifecycle:0.4.0'
-    compile 'com.trello:rxlifecycle-components:0.4.0'
+    implementation 'com.trello:rxlifecycle:0.4.0'
+    implementation 'com.trello:rxlifecycle-components:0.4.0'
     //Retrofit
-    compile 'com.squareup.retrofit2:retrofit:2.0.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0'
-
-
-    compile 'com.android.support:recyclerview-v7:23.4.0'
-    compile 'com.android.support:cardview-v7:23.4.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.0.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava:2.0.0'
 
     //greenDAO
-    compile 'org.greenrobot:greendao:2.2.0'
-
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:v1.7.0'
-
-    compile 'com.github.ganfra:material-spinner:1.1.1'
-
-
-
+    implementation 'org.greenrobot:greendao:2.2.0'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:v1.7.0'
+    implementation 'com.github.ganfra:material-spinner:1.1.1'
+    //OKHttp3.0依赖
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    /*动态权限库EasyPermissions https://github.com/googlesamples/easypermissions */
+    implementation 'pub.devrel:easypermissions:1.3.0'
+    /*   极光推送*/
+    implementation 'cn.jiguang.sdk:jpush:3.1.5'
+    // 此处以JPush 3.1.5 版本为例。
+    implementation 'cn.jiguang.sdk:jcore:1.2.3'
+    implementation files('libs/volley.jar')
+    implementation files('libs/xutils3.jar')
+    implementation files('libs/httpclient-4.3.5.jar')
+    implementation files('libs/httpcore-4.3.2.jar')
+    implementation files('libs/httpmime-4.3.5.jar')
 }

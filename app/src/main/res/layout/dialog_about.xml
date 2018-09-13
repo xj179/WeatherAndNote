@@ -17,7 +17,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@mipmap/head"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/ic_launcher1"
         />
 
     <TextView
@@ -26,6 +27,6 @@
         android:background="@drawable/setting_bg"
         android:gravity="center"
         android:scaleType="center"
-        android:text="欢迎交流：441256563"
+        android:text="@string/app_name"
         />
 </LinearLayout>
